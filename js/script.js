@@ -11,7 +11,7 @@ document.addEventListener("mousemove", (e) => {
 });
 
 const contenedor = document.querySelector("#contenedor");
-// const modal = new bootstrap.Modal('#modal', {})
+const modal = new bootstrap.Modal("#modal", {});
 
 window.onload = () => {
   getPersonajes();
@@ -55,6 +55,10 @@ function mostrarPersonajes(resultado) {
 
     const personajeButton = document.createElement("button");
     personajeButton.classList.add("btn", "btn-danger", "w-100");
+    personajeButton.textContent = "Ver personaje";
+    personajeButton.onclick = function () {
+      verPersonaje(id);
+    };
 
     personajeCardBody.appendChild(personajeHeading);
     personajeCardBody.appendChild(personajeGender);
@@ -67,4 +71,31 @@ function mostrarPersonajes(resultado) {
 
     contenedor.appendChild(personajeContenedor);
   });
+}
+
+async function verPersonaje(id) {
+  console.log(id);
+  const url = `https://attackontitanapi.herokuapp.com/api/characters/${id}`;
+  try {
+    const respuesta = await fetch(url);
+    const resultado = await respuesta.json();
+    mostrarPersonaje(resultado);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function mostrarPersonaje(resultado) {
+  const { name, gender, id, picture_url } = resultado;
+ console.log(resultado)
+  const modalTitle = document.querySelector(".modal .modal-title");
+  const modalBody = document.querySelector(".modal .modal-body");
+  modalTitle.textContent = name;
+
+  modalBody.innerHTML = `
+<img src=${picture_url} alt="image" class="img-fluid" />
+<p class="text-center text-primary">Genero: ${gender}</p>
+<p class="text-center text-primary">id:${id}</p>
+`;
+  modal.show();
 }
